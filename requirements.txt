@@ -1,11 +1,7 @@
-jupyter
-notebook
 tensorflow
 keras
 keras_preprocessing
 numpy
-pandas
-tqdm
 opencv-contrib-python
 pillow
 scikit-learn
