@@ -8,15 +8,19 @@ import time
 app = Flask(__name__)
 CORS(app)
 
+# Get absolute path
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_DIR = os.path.join(BASE_DIR, "models")
+
 # Load the model
 try:
     from keras.models import model_from_json
 
-    json_file = open("./models/emotion_model.json", "r")
+    json_file = open(os.path.join(MODEL_DIR,"emotion_model.json"), "r")
     model_json = json_file.read()
     json_file.close()
     model = model_from_json(model_json)
-    model.load_weights("./models/emotion_model.h5")
+    model.load_weights(os.path.join(MODEL_DIR,"emotion_model.h5"))
     print("Model loaded successfully")
 except Exception as e:
     print(f"Error loading model: {e}")
