@@ -10,4 +10,5 @@ opencv-contrib-python
 pillow
 scikit-learn
 Flask
+flask_cors
 gunicorn
