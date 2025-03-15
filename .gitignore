@@ -9,10 +9,8 @@ __pycache__/
 *.pyd
 *.log
 
-# Virtual environments
-venv/
+# Python environment
 .env
-*.env
 
 # Logs
 logs/
@@ -25,35 +23,3 @@ logs/
 .DS_Store
 Thumbs.db
 
-# ========================
-# 🔹 Backend (Flask)
-# ========================
-
-# Ignore model-related files (if they are large)
-models/*.h5
-models/*.keras
-models/*.json
-
-# Ignore Jupyter Notebook checkpoints
-notebooks/.ipynb_checkpoints/
-images
-
-# Ignore compiled Python files
-*.pyc
-*.pyo
-*.pyd
-
-# ========================
-# 🔹 Frontend (React)
-# ========================
-
-# Ignore node_modules (installed dependencies)
-frontend/node_modules/
-frontend/.next/
-
-# Ignore build files
-frontend/build/
-
-# Ignore React environment variables
-frontend/.env
-frontend/.env.local
