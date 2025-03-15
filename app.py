@@ -6,7 +6,7 @@ import os
 import time
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins="https://face-expression-detector-frontend.vercel.app/")
 
 # Get absolute path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
