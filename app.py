@@ -207,5 +207,6 @@ def make_pred():
 
 
 if __name__ == "__main__":
-    print("Starting facial expression detection server...")
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Get port from environment variable
+    print(f"Starting server on port {port}...")
+    app.run(host="0.0.0.0", port=port)
