@@ -4,9 +4,15 @@ import numpy as np
 from flask_cors import CORS
 import os
 import time
+import sys
+
+print("Python version:", sys.version)
+print("Starting application...")
+print("Current directory:", os.getcwd())
+print("Files in current directory:", os.listdir("."))
 
 app = Flask(__name__)
-CORS(app, origins="https://face-expression-detector-frontend.vercel.app/")
+CORS(app)
 
 # Get absolute path
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,17 +20,33 @@ MODEL_DIR = os.path.join(BASE_DIR, "models")
 
 # Load the model
 try:
-    from keras.models import model_from_json
+    from tensorflow.keras.models import model_from_json
 
-    json_file = open(os.path.join(MODEL_DIR,"emotion_model.json"), "r")
+    # Adjust the path for Render environment
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_DIR = os.path.join(BASE_DIR, "models")
+
+    # Check if model files exist and print paths for debugging
+    model_json_path = os.path.join(MODEL_DIR, "emotion_model.json")
+    model_weights_path = os.path.join(MODEL_DIR, "emotion_model.h5")
+
+    print(f"Looking for model at: {model_json_path}")
+    print(f"Looking for weights at: {model_weights_path}")
+
+    if not os.path.exists(model_json_path) or not os.path.exists(model_weights_path):
+        print("ERROR: Model files not found at expected locations")
+
+    json_file = open(model_json_path, "r")
     model_json = json_file.read()
     json_file.close()
     model = model_from_json(model_json)
-    model.load_weights(os.path.join(MODEL_DIR,"emotion_model.h5"))
+    model.load_weights(model_weights_path)
     print("Model loaded successfully")
 except Exception as e:
     print(f"Error loading model: {e}")
-    exit(1)
+    import traceback
+
+    traceback.print_exc()
 
 # Create a debug directory if it doesn't exist
 DEBUG_DIR = "debug_images"
