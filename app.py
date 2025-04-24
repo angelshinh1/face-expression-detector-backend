@@ -6,6 +6,9 @@ import os
 import time
 import sys
 
+# DEBUG flag - True for local development, False for production
+DEBUG = True
+
 print("Python version:", sys.version)
 print("Starting application...")
 print("Current directory:", os.getcwd())
@@ -48,9 +51,13 @@ except Exception as e:
 
     traceback.print_exc()
 
-# Create a debug directory if it doesn't exist
+# Create a debug directory only if DEBUG is True
 DEBUG_DIR = "debug_images"
-os.makedirs(DEBUG_DIR, exist_ok=True)
+if DEBUG:
+    os.makedirs(DEBUG_DIR, exist_ok=True)
+    print(f"Debug mode is ON - images will be saved to {DEBUG_DIR}")
+else:
+    print("Debug mode is OFF - no images will be saved")
 
 # Load the face detector with multiple options
 haar_file = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -84,6 +91,12 @@ def extract_feats(image):
     return feature / 255
 
 
+def save_debug_image(image, filename):
+    """Helper function to save debug images only if DEBUG is True"""
+    if DEBUG:
+        cv2.imwrite(os.path.join(DEBUG_DIR, filename), image)
+
+
 @app.route("/predict", methods=["POST"])
 def make_pred():
     try:
@@ -94,9 +107,9 @@ def make_pred():
         npimg = np.frombuffer(file, np.uint8)
         img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
-        # Save the received image for debugging
-        debug_input_path = os.path.join(DEBUG_DIR, f"input_{timestamp}.jpg")
-        cv2.imwrite(debug_input_path, img)
+        # Save the received image for debugging only if DEBUG is True
+        if DEBUG:
+            save_debug_image(img, f"input_{timestamp}.jpg")
 
         # Convert to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -170,9 +183,9 @@ def make_pred():
             face_region = gray[q : q + s, p : p + r]
             face_region_resized = cv2.resize(face_region, (48, 48))
 
-            # Save the processed face
-            face_debug_path = os.path.join(DEBUG_DIR, f"face_{timestamp}_{i}.jpg")
-            cv2.imwrite(face_debug_path, face_region_resized)
+            # Save the processed face only if DEBUG is True
+            if DEBUG:
+                save_debug_image(face_region_resized, f"face_{timestamp}_{i}.jpg")
 
             # Draw rectangle on debug image
             cv2.rectangle(debug_img, (p, q), (p + r, q + s), (0, 255, 0), 2)
@@ -209,9 +222,9 @@ def make_pred():
                 }
             )
 
-        # Save debug image with annotations
-        debug_output_path = os.path.join(DEBUG_DIR, f"output_{timestamp}.jpg")
-        cv2.imwrite(debug_output_path, debug_img)
+        # Save debug image with annotations only if DEBUG is True
+        if DEBUG:
+            save_debug_image(debug_img, f"output_{timestamp}.jpg")
 
         return jsonify(
             {
@@ -229,6 +242,6 @@ def make_pred():
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Get port from environment variable
+    port = 8080
     print(f"Starting server on port {port}...")
     app.run(host="0.0.0.0", port=port)
