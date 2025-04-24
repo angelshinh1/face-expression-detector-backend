@@ -7,7 +7,7 @@ import time
 import sys
 
 # DEBUG flag - True for local development, False for production
-DEBUG = True
+DEBUG = False
 
 print("Python version:", sys.version)
 print("Starting application...")
